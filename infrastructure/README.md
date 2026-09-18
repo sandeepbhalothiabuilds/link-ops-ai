@@ -5,9 +5,9 @@ It provisions the product plane data path (DynamoDB, SQS, Lambda/API Gateway,
 CloudWatch alarms/dashboard), the engineering-control-plane AgentCore runtime,
 AgentCore Memory, and the seed knowledge corpus bucket.
 
-The application repository is expected at the sibling path
-../agentic-sdlc-url-shortener during packaging. No credentials or confidential
-assignment documents belong in either repository.
+The published monorepo keeps the application at `../application` relative to
+this directory. No credentials or confidential assignment documents belong in
+either repository.
 
 ## Prerequisites
 
@@ -25,11 +25,11 @@ assignment documents belong in either repository.
 
 ## Deployment sequence
 
-1. python scripts/package_product.py --app-repo ..\agentic-sdlc-url-shortener
+1. python scripts/package_product.py --app-repo ..\application
 2. cdk deploy LinkOpsProductStack
 3. Upload the seed corpus and create/supply the Bedrock Knowledge Base ID with
    python scripts/sync_knowledge_base.py --knowledge-base-id ID --data-source-id ID.
-4. python scripts/package_agentcore.py --app-repo ..\agentic-sdlc-url-shortener
+4. python scripts/package_agentcore.py --app-repo ..\application
 5. cdk deploy LinkOpsAgentCoreStack -c agentcoreCodePath=build\agentcore
 6. Invoke the runtime using python scripts/invoke_agentcore.py --runtime-arn ARN.
 
