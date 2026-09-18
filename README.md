@@ -29,3 +29,5 @@ npx --yes aws-cdk synth --app ".\.venv\Scripts\python.exe app.py"
 ```
 
 See the application and infrastructure READMEs for configuration, deployment, operations, and scenario walkthroughs.
+The complete local command-by-command walkthrough is in
+[`application/docs/runbooks/local-end-to-end-testing.md`](application/docs/runbooks/local-end-to-end-testing.md).

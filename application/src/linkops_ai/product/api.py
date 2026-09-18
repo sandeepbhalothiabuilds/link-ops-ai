@@ -80,6 +80,7 @@ def create_app(service: LinkService | None = None) -> FastAPI:
 
     app.add_exception_handler(InvalidDestinationUrl, invalid_input)
     app.add_exception_handler(InvalidAlias, invalid_input)
+    app.add_exception_handler(ValueError, invalid_input)
 
     @app.exception_handler(AliasAlreadyExists)
     async def duplicate_alias(_request: Request, exc: Exception) -> Response:

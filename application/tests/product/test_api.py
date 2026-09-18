@@ -47,3 +47,17 @@ def test_expired_link_returns_gone(service) -> None:
         update={"expires_at": datetime.now(UTC) - timedelta(seconds=1)}
     )
     assert client.get("/expired", follow_redirects=False).status_code == 410
+
+
+def test_past_expiry_is_a_stable_client_error(service) -> None:
+    client = TestClient(create_app(service))
+    response = client.post(
+        "/api/v1/links",
+        json={
+            "url": "https://example.com",
+            "custom_alias": "past-expiry",
+            "expires_at": (datetime.now(UTC) - timedelta(seconds=1)).isoformat(),
+        },
+    )
+    assert response.status_code == 400
+    assert response.headers["content-type"] == "application/problem+json"

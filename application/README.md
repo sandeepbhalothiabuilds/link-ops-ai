@@ -76,5 +76,6 @@ strings are never stored.
 
 See [docs/architecture/overview.md](docs/architecture/overview.md),
 [docs/architecture/README.md](docs/architecture/README.md),
+[docs/runbooks/local-end-to-end-testing.md](docs/runbooks/local-end-to-end-testing.md),
 [docs/runbooks/local-development.md](docs/runbooks/local-development.md), and the
 `../infrastructure/README.md` for deployment instructions.

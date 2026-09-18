@@ -10,3 +10,7 @@ The default storage backend is in-memory. Set `LINKOPS_STORAGE_BACKEND=aws` only
 the infrastructure repository has created the DynamoDB tables and SQS queue and the AWS
 identity is configured. Bedrock model and Knowledge Base calls are never required for
 the deterministic local scenarios.
+
+For the complete command-by-command walkthrough, expected responses, failure meanings,
+analytics behavior, control-plane scenarios, and shutdown instructions, see
+[local end-to-end testing](local-end-to-end-testing.md).
