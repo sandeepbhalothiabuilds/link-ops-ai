@@ -1,0 +1,30 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "linkops-ai-infrastructure"
+version = "0.1.0"
+description = "AWS CDK deployment for LinkOps AI."
+requires-python = ">=3.12"
+dependencies = ["aws-cdk-lib>=2.170.0", "constructs>=10.0.0", "boto3>=1.35.0"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3.0", "ruff>=0.8.0", "mypy>=1.13.0"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["infrastructure"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+exclude = ["cdk.out"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

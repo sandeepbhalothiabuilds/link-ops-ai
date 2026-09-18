@@ -1,0 +1,10 @@
+{
+  "app": "python app.py",
+  "context": {
+    "environment": "dev",
+    "agentcoreRuntimeName": "LinkOpsControlPlane",
+    "agentcoreCodePath": "runtime/code",
+    "productCodePath": "lambda_code",
+    "knowledgeSeedPath": "seed_knowledge"
+  }
+}
