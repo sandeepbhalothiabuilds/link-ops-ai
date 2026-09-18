@@ -54,6 +54,8 @@ class DynamoLinkRepository(LinkRepository):
             if exc.response.get("Error", {}).get("Code") == "ResourceNotFoundException":
                 return None
             raise PersistenceUnavailable("DynamoDB idempotency lookup failed") from exc
+        except BotoCoreError as exc:
+            raise PersistenceUnavailable("DynamoDB idempotency lookup failed") from exc
         items = response.get("Items", [])
         return _link_from_item(items[0]) if items else None
 
@@ -77,6 +79,8 @@ class DynamoLinkRepository(LinkRepository):
             if exc.response.get("Error", {}).get("Code") == "ConditionalCheckFailedException":
                 raise LinkNotFound(slug) from exc
             raise PersistenceUnavailable("DynamoDB delete failed") from exc
+        except BotoCoreError as exc:
+            raise PersistenceUnavailable("DynamoDB delete failed") from exc
         return _link_from_item(response["Attributes"])
 
     def is_ready(self) -> bool:
@@ -96,25 +100,61 @@ class DynamoAnalyticsRepository(AnalyticsRepository):
     def increment(self, event: ClickEvent) -> AnalyticsBucket:
         occurred = event.occurred_at.astimezone(UTC)
         bucket = occurred.strftime("%Y-%m-%d-%H")
-        names = {"#count": "click_count", "#last": "last_click_at"}
-        values: dict[str, Any] = {":one": 1, ":last": occurred.isoformat()}
-        expression = "ADD #count :one SET #last = :last"
-        if event.referrer_host:
-            names["#refs"] = "referrer_counts"
-            values[":ref"] = {event.referrer_host: 1}
-            # A map increment is not supported in one portable DynamoDB update,
-            # so aggregate counters remain bounded by the worker's read/merge path.
         try:
             self.table.update_item(
                 Key={"slug": event.slug, "bucket": bucket},
-                UpdateExpression=expression,
-                ExpressionAttributeNames=names,
-                ExpressionAttributeValues=values,
+                UpdateExpression=(
+                    "SET #count = if_not_exists(#count, :zero) + :one, "
+                    "#last = :last, "
+                    "#refs = if_not_exists(#refs, :empty_map), "
+                    "#agents = if_not_exists(#agents, :empty_map)"
+                ),
+                ExpressionAttributeNames={
+                    "#count": "click_count",
+                    "#last": "last_click_at",
+                    "#refs": "referrer_counts",
+                    "#agents": "user_agent_counts",
+                },
+                ExpressionAttributeValues={
+                    ":zero": 0,
+                    ":one": 1,
+                    ":last": occurred.isoformat(),
+                    ":empty_map": {},
+                },
             )
+            self.table.update_item(
+                Key={"slug": event.slug, "bucket": bucket},
+                UpdateExpression=(
+                    "SET #agents.#agent = if_not_exists(#agents.#agent, :zero) + :one"
+                ),
+                ExpressionAttributeNames={
+                    "#agents": "user_agent_counts",
+                    "#agent": event.user_agent_category,
+                },
+                ExpressionAttributeValues={":zero": 0, ":one": 1},
+            )
+            if event.referrer_host:
+                self.table.update_item(
+                    Key={"slug": event.slug, "bucket": bucket},
+                    UpdateExpression=(
+                        "SET #refs.#ref = if_not_exists(#refs.#ref, :zero) + :one"
+                    ),
+                    ExpressionAttributeNames={
+                        "#refs": "referrer_counts",
+                        "#ref": event.referrer_host,
+                    },
+                    ExpressionAttributeValues={":zero": 0, ":one": 1},
+                )
         except (BotoCoreError, ClientError) as exc:
             raise PersistenceUnavailable("DynamoDB analytics write failed") from exc
+        referrer_counts = {event.referrer_host: 1} if event.referrer_host else {}
         return AnalyticsBucket(
-            slug=event.slug, bucket=bucket, click_count=1, last_click_at=occurred
+            slug=event.slug,
+            bucket=bucket,
+            click_count=1,
+            referrer_counts=referrer_counts,
+            user_agent_counts={event.user_agent_category: 1},
+            last_click_at=occurred,
         )
 
     def list_for_slug(self, slug: str) -> list[AnalyticsBucket]:

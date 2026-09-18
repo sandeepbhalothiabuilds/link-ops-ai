@@ -17,6 +17,6 @@
 | AgentCore deployment | HTTP runtime artifact, memory resource, runtime role | infrastructure repo |
 | Observability | audit.ndjson, metrics schema, CloudWatch dashboard | artifacts, observability.py |
 
-The supplied assignment and SOW are intentionally not copied into the repository.
-This matrix uses only concise implementation labels and does not publish confidential
-source text.
+The supplied SOW is included at `docs/reference/LinkOps_AI_Agentic_URL_Shortener_SOW.docx`
+for traceability. The assignment PDF is intentionally not copied; this matrix uses
+only concise implementation labels and does not publish confidential source text.

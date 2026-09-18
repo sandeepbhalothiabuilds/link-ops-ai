@@ -61,17 +61,20 @@ docs/                           Architecture, operations and decision records
 scripts/                        Reproducible local quality/demo commands
 ```
 
-AWS infrastructure is deliberately kept in the sibling repository so application
-changes and cloud deployment changes have independent review and release lifecycles.
+AWS infrastructure is deliberately kept in the sibling `../infrastructure` folder
+so application changes and cloud deployment changes have independent review and
+release lifecycles.
 
 ## Safety and data handling
 
 The workflow never receives arbitrary shell access. Repository tools enforce a
 workspace boundary, deny credential/secret paths, and require explicit approval for
-external side effects. The source assignment documents are not copied into this
-repository. Analytics persist aggregate counters only; raw IP addresses and complete
-user-agent strings are never stored.
+external side effects. The supplied SOW is retained under `docs/reference/` for
+traceability; the assignment PDF and confidential source materials are not copied.
+Analytics persist aggregate counters only; raw IP addresses and complete user-agent
+strings are never stored.
 
 See [docs/architecture/overview.md](docs/architecture/overview.md),
+[docs/architecture/README.md](docs/architecture/README.md),
 [docs/runbooks/local-development.md](docs/runbooks/local-development.md), and the
-infrastructure repository README for deployment instructions.
+`../infrastructure/README.md` for deployment instructions.

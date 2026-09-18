@@ -141,6 +141,7 @@ class LinkOpsProductStack(Stack):
             environment={
                 "LINKOPS_ENVIRONMENT": "aws",
                 "LINKOPS_STORAGE_BACKEND": "aws",
+                "LINKOPS_AWS_REGION": self.region,
                 "LINKOPS_BASE_URL": "https://replace-with-api-domain",
                 "LINKOPS_LINKS_TABLE_NAME": self.links_table.table_name,
                 "LINKOPS_ANALYTICS_TABLE_NAME": self.analytics_table.table_name,
@@ -174,7 +175,12 @@ class LinkOpsProductStack(Stack):
             code=lambda_.Code.from_asset(str(product_code)),
             role=worker_role,
             timeout=Duration.seconds(60),
-            environment={"LINKOPS_ANALYTICS_TABLE_NAME": self.analytics_table.table_name},
+            environment={
+                "LINKOPS_ENVIRONMENT": "aws",
+                "LINKOPS_STORAGE_BACKEND": "aws",
+                "LINKOPS_AWS_REGION": self.region,
+                "LINKOPS_ANALYTICS_TABLE_NAME": self.analytics_table.table_name,
+            },
         )
         worker.add_event_source(
             event_sources.SqsEventSource(
