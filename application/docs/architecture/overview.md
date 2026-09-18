@@ -1,5 +1,9 @@
 # LinkOps AI architecture
 
+![Product data flow](../assets/product-data-flow.svg)
+
+![Governed engineering control plane](../assets/control-plane-flow.svg)
+
 ```mermaid
 flowchart LR
   Client --> API[FastAPI / Lambda adapter]

@@ -49,6 +49,18 @@ python -m ruff check .
 python -m mypy src
 ```
 
+## Visual overview
+
+The live local API surface is captured in [Swagger UI](docs/assets/swagger-ui.png).
+The repository also includes rendered architecture visuals for the product data path
+and governed engineering workflow:
+
+![Swagger UI](docs/assets/swagger-ui.png)
+
+![Product data flow](docs/assets/product-data-flow.svg)
+
+![Governed engineering control plane](docs/assets/control-plane-flow.svg)
+
 ## Repository map
 
 ```text
